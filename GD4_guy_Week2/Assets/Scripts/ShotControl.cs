@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ShotControl : MonoBehaviour
 {
-   
+    bool f_HitPlayer =false;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -28,5 +28,30 @@ public class ShotControl : MonoBehaviour
             }
         
         }
+
+        if (f_HitPlayer ==true)
+
+        {
+
+
+            if (gameObject != null)
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        if (collision.gameObject.tag == "Player")
+
+        { f_HitPlayer = true; 
+
+
+
+
+        }
+
+
+
+
+
     }
 }

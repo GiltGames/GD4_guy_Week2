@@ -7,18 +7,23 @@ public class Autocar : MonoBehaviour
     public float v_speed;
     public int v_limit;
     public int v_count;
+    AudioSource Engine;
 
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        Engine = GetComponent<AudioSource>();
+        Engine.Play();
     }
 
     // Update is called once per frame
     void Update()
     {
+
+
+
 
         if (v_count < v_limit)
         {

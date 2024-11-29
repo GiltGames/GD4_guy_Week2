@@ -9,6 +9,10 @@ public class Timer : MonoBehaviour
     public TextMeshProUGUI textT;
 
     public PlayerMove PlayerMove;
+    public StartScript StartScript;
+    public string v_winnerindex = "";
+    public float v_winningTime;
+    public bool vGameOver = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,14 +23,23 @@ public class Timer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PlayerMove.f_finish == false)
+        if (StartScript.v_GAMESTART == true)
         {
             v_timer = v_timer + Time.deltaTime;
+
+            if (vGameOver == false)
+            {
+                v_timeShow = Mathf.RoundToInt(v_timer * 100);
+
+                textT.text = "Time: " + (Mathf.Round(v_timer * 100) / 100);
+            }
+
+            else
+            {
+
+                textT.text = "Winner is Player " + v_winnerindex + " in " + v_winningTime + " seconds";
+            }
+
         }
-            
-            v_timeShow = Mathf.RoundToInt(v_timer*100);
-
-       textT.text = "Time: " + v_timeShow/100;
-
     }
 }

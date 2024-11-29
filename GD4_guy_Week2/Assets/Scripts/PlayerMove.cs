@@ -1,3 +1,4 @@
+using TMPro;
 using Unity.Mathematics;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -43,17 +44,32 @@ public class PlayerMove : MonoBehaviour
     public FollowPlayer FollowPlayer;
 
 
-    public bool f_chkPoint = false;
-    public bool f_end = false;
+    public  bool f_chkPoint = false;
+     public  bool f_end = false;
     public bool f_finish = false;
     public string v_playerIndex;
 
     public StartScript StartScript;
+    public float v_lapTime;
+    public float v_jump;
+    public float v_jumpForce=20;
+    public Vector3 v_upforce;
+
+    public TextMeshPro Display;
+    public TextMeshPro DisplayLap;
+    public Timer Timer;
+    float v_CheckPointTime;
+    public float v_checkPointDisplayDuration;
+    AudioSource vEngineAudio;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        vEngineAudio = GetComponent<AudioSource>();
+        vEngineAudio.Play();
+        vEngineAudio.volume = 0;
+
     }
 
     // Update is called once per frame
@@ -71,7 +87,7 @@ public class PlayerMove : MonoBehaviour
             v_forceinput = Input.GetAxis("Vertical"+v_playerIndex);
             v_sideinput = Input.GetAxis("Horizontal"+v_playerIndex);
             v_highgearMv = Input.GetAxis("Extra" + v_playerIndex);
-            
+            v_jump = Input.GetAxis("Jump" + v_playerIndex);
 
             
          
@@ -82,7 +98,14 @@ public class PlayerMove : MonoBehaviour
 
             v_LocalinEuluer = transform.localEulerAngles;
             v_speed = rb.linearVelocity.magnitude;
-        
+
+        vEngineAudio.volume = 0;
+        if( v_highgearMv >0.1f || v_highgearMv < -0.1f)
+        {
+            vEngineAudio.volume = 0.2f;
+        }
+
+        vEngineAudio.volume = v_forceinput;
         
         //
 
@@ -113,7 +136,8 @@ public class PlayerMove : MonoBehaviour
         if(v_highgearMv <0 )
         {
             v_sideinput = -1 * v_sideinput;
-        }
+
+         }
         
         //reverse turn directio if rear view camera is on
 
@@ -180,7 +204,21 @@ public class PlayerMove : MonoBehaviour
         
             transform.Translate(Vector3.forward * Time.deltaTime * v_highgear *v_highgearMv);
         
+        
+        
 
+        // Jump
+
+        if (v_jump >0)
+        {
+            Debug.Log("JUmp" + transform.up);
+            v_upforce = transform.up;
+                v_upforce =v_upforce * Time.deltaTime * v_jumpForce;
+            rb.AddForce(v_upforce);
+          v_jump = 0;
+            v_upforce = Vector3.zero;
+            
+        }
 
 
         //Escape
@@ -191,6 +229,40 @@ public class PlayerMove : MonoBehaviour
             SceneManager.LoadScene(0);
         }
 
+
+        /// Displays checkpoint and lap 
+        /// 
+
+        if (f_chkPoint == true && Timer.v_timer < v_checkPointDisplayDuration + v_CheckPointTime)
+
+        {
+            Display.text = "Checkpoint reached";
+        }
+
+        else
+        {
+            Display.text = "";
+        }
+
+        if (f_end == true && Timer.v_timer < v_checkPointDisplayDuration + v_lapTime)
+
+        {
+            DisplayLap.text = "Lap Time: " + v_lapTime;
+        }
+
+        else
+        {
+            DisplayLap.text = "";
+        }
+
+        if(f_finish == true)
+        {
+            DisplayLap.text = "Finish Time: " + v_lapTime;
+
+
+
+
+        }
 
 
     }
@@ -213,7 +285,52 @@ public class PlayerMove : MonoBehaviour
         v_tag = ""; 
     }
 
+ void OnTriggerEnter(Collider hit)
+    {//checkpoint reached
+        
+            if(hit.gameObject.tag =="Checkpoint")
+        {
+            v_CheckPointTime = Timer.v_timer;
+            Debug.Log(Timer.v_timer);
+            Debug.Log(v_CheckPointTime);
 
+            f_chkPoint = true;
+        }
+            //End of Lap - finish if it is second lap
+
+        if (hit.gameObject.tag == "Finish")
+        {
+
+            if (f_chkPoint == true && f_end == true)
+            {
+                
+                v_lapTime = Mathf.Round(Timer.v_timer*100)/100;
+                f_finish = true;
+
+
+
+                if (Timer.vGameOver == false)
+                {
+                    Timer.v_winnerindex = v_playerIndex;
+                    Timer.v_winningTime = v_lapTime;
+                    Timer.vGameOver = true;
+                }
+
+            }
+
+            if (f_chkPoint == true)
+            {
+                f_end = true;
+
+                v_lapTime = Mathf.Round(Timer.v_timer * 100)/100;
+
+                f_chkPoint = false;
+
+            }
+
+           
+        }
+    }
 
 
 

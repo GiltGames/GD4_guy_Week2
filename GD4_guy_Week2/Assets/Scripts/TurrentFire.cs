@@ -14,12 +14,13 @@ public class TurrentFire : MonoBehaviour
   //  public Vector3 v_shotOffset = new Vector3(3, 0, 0);
     public Vector3 v_shotDirection;
     public GameObject v_Firepoint;
+    public AudioSource firesound;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         
-       
+       firesound = GetComponent<AudioSource>();
 
     }
 
@@ -31,6 +32,8 @@ public class TurrentFire : MonoBehaviour
         if (v_localTimer > v_ShotInterval )
         {
             v_localTimer = 0;  
+
+            firesound.Play();
 
             v_shotDirection = transform.eulerAngles;
 

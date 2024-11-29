@@ -35,7 +35,7 @@ public class StartScript : MonoBehaviour
         {
             Timer.v_timer = 0;
 
-            TimeDsp.text = "NIL";
+            TimeDsp.text = "";
 
             if(Input.GetKeyDown(KeyCode.Alpha1))
             {
