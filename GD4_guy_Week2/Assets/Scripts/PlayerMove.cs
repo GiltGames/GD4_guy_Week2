@@ -1,6 +1,5 @@
 using TMPro;
 using Unity.Mathematics;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -31,7 +30,7 @@ public class PlayerMove : MonoBehaviour
     string v_touching;
     GameObject v_collide;
     GameObject v_terrain;
-    TagField v_terratintag;
+    string v_terratintag;
     string v_tertag = "Dust";
     string v_tag;
     float v_highgear = 4f;
